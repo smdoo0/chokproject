@@ -1,5 +1,8 @@
 import pygame
 
+print("한승주 바보")
+
+
 pygame.init()
 
 screen_width = 480
