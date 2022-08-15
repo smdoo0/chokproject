@@ -15,7 +15,7 @@ start_img = pygame.image.load("이미지\startimg.png")
 
 select_size = start_img.get_rect().size
 w = select_size[0]
-h= select_size[1]
+h = select_size[1]
 
 clock = pygame.time.Clock()
 
@@ -50,6 +50,19 @@ class Button():
 
         screen.blit(self.image,(self.rect.x,self.rect.y))
         return action
+
+#글씨쓰기
+def draw_text(text, size, color, x, y):
+    font = pygame.font.SysFont(None, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    screen.blit(text_surface, text_rect)
+
+#게이지
+def gauge():
+    draw_text('Drunk: %d' %drunk, 40, WHITE, 80, 10)
+    draw_text('Full: %d' %full, 40, WHITE, 75, 60)
 
 pygame.display.set_caption("술자리 시뮬레이션")
 
@@ -87,17 +100,23 @@ def selectscreen():
         pygame.display.update()
         clock.tick(30)
 
-#글씨쓰기
-def draw_text(text, size, color, x, y):
-    font = pygame.font.SysFont(None, size)
-    text_surface = font.render(text, True, color)
-    text_rect = text_surface.get_rect()
-    text_rect.midtop = (x, y)
-    screen.blit(text_surface, text_rect)
+#화면전환(게임오버)
+def gameover():
+    g_o = True
+    while g_o:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        
+        screen.fill((0, 0, 0))
+        draw_text('Game Over', 100, WHITE, 500, 300)
+        restart_button = Button(500, 500, start_img)
 
-#게이지
-def gauge():
-    draw_text('Drunk: %d' %drunk, 40, WHITE, 80, 10)
-    draw_text('Full: %d' %full, 40, WHITE, 75, 60)
+        if restart_button.draw() == True:
+            mainmenu()
 
-mainmenu()
+        pygame.display.update()
+        clock.tick(30)
+
+gameover()
