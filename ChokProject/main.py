@@ -10,8 +10,8 @@ screen_width = 1080
 screen_height = 640
 screen = pygame.display.set_mode((screen_width, screen_height))
 
-background_img = pygame.image.load("이미지\\backgroundimg.png")
-start_img = pygame.image.load("이미지\startimg.png")
+background_img = pygame.image.load("이미지//backgroundimg.png")
+start_img = pygame.image.load("이미지/startimg.png")
 
 select_size = start_img.get_rect().size
 w = select_size[0]
