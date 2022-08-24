@@ -32,12 +32,16 @@ table_image = pygame.image.load("이미지/table.jpg")
 table_image = pygame.transform.scale(table_image,(screen_width, screen_height)) # 테이블 배경용
 
 # 테이블에서의 행동들에 대한 버튼
-select1_image = pygame.image.load("이미지/move.png") # 다른 장소로 이동 이미지
-select1_image=pygame.transform.scale(select1_image,(120,150))
-select2_image = pygame.image.load("이미지/food.jpg") # 안주 먹기 이미지
-select2_image=pygame.transform.scale(select2_image,(150,150))
-select3_image = pygame.image.load("이미지/glass.jpg") # 잔 확인 이미지
-select3_image=pygame.transform.scale(select3_image,(150,150))
+move= pygame.image.load("이미지/move.png") # 다른 장소로 이동 이미지
+move=pygame.transform.scale(move,(120,150))
+food = pygame.image.load("이미지/food.jpg") # 안주 먹기 이미지
+food=pygame.transform.scale(food,(150,150))
+glass = pygame.image.load("이미지/glass.jpg") # 잔 확인 이미지
+glass=pygame.transform.scale(glass,(150,150))
+cheers=pygame.image.load("이미지/cheers.png") # 짠(건배) 이미지
+cheers=pygame.transform.scale(cheers,(150,150))
+gensei=pygame.image.load("이미지/gensei.jpg")
+gensei=pygame.transform.scale(gensei,(110,110))
 
 # 테이블 행동(다른 장소로 이동)에 대한 버튼
 toilet=pygame.image.load("이미지/toilet.jpg") # 화장실 이미지
@@ -234,11 +238,13 @@ juice_b=Button(335,screen_height-230,juice)
 beer_b=Button(590,screen_height-230,beer)
 soju_b=Button(840,screen_height-230,soju)
 
+# 잔에 들어있는 음료의 종류를 저장하기 위한 리스트
+drink_array=[]
+
 # 맨 처음 시작할 때 마실 것 정하기 (음료 종류가 4개) => 4개의 잔 정하기
 def choose_drink():
     pygame.display.set_caption("음료 정하기")
     drink = 0 # 잔의 개수
-    drink_array=[] # 잔에 들어있는 음료의 종류
 
     running = True
     while running:
@@ -253,18 +259,18 @@ def choose_drink():
         text_s1 = font2.render("음료를 선택하세요", True, (255,100,0))
         screen.blit(text_s1, (screen_width/2-170,180))
 
-        # 음료 선택 (버튼을 누를 때 마다 그 버튼의 음료가 배열에 추가됨)
+        # 음료 선택 (버튼을 누를 때 마다 그 버튼의 음료가 리스트에 추가됨)
         if water_b.draw():
-            drink_array.append("water")
+            drink_array.append(["water"]) # []로 안하면 중복 인식을 하는지 같은 음료 여러 번 선택하면 안떠서 []로 함
             drink=drink+1
         elif juice_b.draw():
-            drink_array.append("juice")
+            drink_array.append(["juice"]) # 같은 이유
             drink=drink+1
         elif beer_b.draw():
-            drink_array.append("beer")
+            drink_array.append(["beer"]) # 같은 이유
             drink=drink+1
         elif soju_b.draw():
-            drink_array.append("soju")
+            drink_array.append(["soju"]) # 같은 이유
             drink=drink+1
         
         # 4개의 잔을 모두 선택하면 테이블로 넘어감
@@ -290,9 +296,11 @@ def choose_drink():
 
 
 # 테이블 버튼
-select1_image = Button(150, screen_height-230, select1_image)
-select2_image = Button(460, screen_height-230, select2_image)
-select3_image = Button(screen_width-280, screen_height-230, select3_image)
+move = Button(90, screen_height-230, move)
+food = Button(335, screen_height-230, food)
+glass = Button(590, screen_height-230, glass)
+cheers = Button(840, screen_height-230, cheers)
+gensei = Button(820, screen_height-420, gensei)
 
 # 포만도가 다 차있는지 판단
 global food_max
@@ -315,19 +323,25 @@ def table():
         screen.blit(place_table, (screen_width-260,30))
         
         table_mv=font3.render("다른 장소로 가기",True,WHITE)
-        screen.blit(table_mv, (130,screen_height-60))
+        screen.blit(table_mv, (65,screen_height-60))
 
         table_fd=font3.render("안주 먹기",True,WHITE)
-        screen.blit(table_fd, (488,screen_height-60))
+        screen.blit(table_fd, (365,screen_height-60))
 
         table_gl=font3.render("다른 사람의 잔 확인",True,WHITE)
-        screen.blit(table_gl, (screen_width-300,screen_height-60))
+        screen.blit(table_gl, (570,screen_height-60))
+
+        table_ch=font3.render("짠",True,WHITE)
+        screen.blit(table_ch, (900,screen_height-60))
+
+        table_ge=font3.render("겐세이",True,WHITE)
+        screen.blit(table_ge, (840,screen_height-295))
 
         p.draw(screen)
         p.update()
 
         # 다른 장소 가기
-        if select1_image.draw():
+        if move.draw():
             print("다른 장소로 갑니다")
             move_place(1) # 다른 장소로 가는 화면 전환
 
@@ -336,7 +350,7 @@ def table():
             food_max=True
 
         # 안주 먹기
-        if select2_image.draw():
+        if food.draw():
             if food_max==False: # 포만도가 다 안차있으면 실행
                 print("안주를 먹습니다") # 안주 먹기(취기 - 포만도 ++ )
                 p.sprite.get_drunk_down(20)
@@ -344,9 +358,19 @@ def table():
                 move_place(2) # 안주를 먹는 화면 전환
         
         # 자리에 없는 사람 잔 확인
-        if select3_image.draw():
+        if glass.draw():
             print("자리에 없는 사람의 잔을 확인합니다")
             move_place(3) # 자리에 없는 사람의 잔을 확인하는 화면 전환
+        
+        # 짠
+        if cheers.draw():
+            print("짠")
+            move_place(4) # 짠(건배) 화면 전환
+
+        # 겐세이
+        if gensei.draw():
+            print("겐세이")
+            move_place(5) # 겐세이 화면 전환
 
         pygame.display.update()
         clock.tick(30)
@@ -357,11 +381,33 @@ table_b=Button(screen_width/2-60,400,table_b) # 테이블로 가는 버튼
 toilet_b=Button(150, screen_height-230,toilet) # 화장실로 가는 버튼
 store_b=Button(460, screen_height-230,store) # 편의점으로 가는 버튼
 smoking_b=Button(screen_width-280, screen_height-230,smoking) # 흡연장으로 가는 버튼
-close_b=Button(460, screen_height-230,close) # 편의점 또 못가는 걸 표시해주는 버튼
+close_b=Button(460, screen_height-230,close) # 편의점 또 못가는 걸 표시해줌
 
 # 편의점에 간 적이 있는지 판단
 global try_store
 try_store=False
+
+# 짠할 때 마실 음료 버튼
+# drink_array.index(i)==0 일 때
+water_0=Button(90,screen_height-230,water)
+juice_0=Button(90,screen_height-230,juice)
+beer_0=Button(90,screen_height-230,beer)
+soju_0=Button(90,screen_height-230,soju)
+# drink_array.index(i)==1 일 때
+water_1=Button(335,screen_height-230,water)
+juice_1=Button(335,screen_height-230,juice)
+beer_1=Button(335,screen_height-230,beer)
+soju_1=Button(335,screen_height-230,soju)
+# drink_array.index(i)==2 일 때
+water_2=Button(590,screen_height-230,water)
+juice_2=Button(590,screen_height-230,juice)
+beer_2=Button(590,screen_height-230,beer)
+soju_2=Button(590,screen_height-230,soju)
+# drink_array.index(i)==3 일 때
+water_3=Button(840,screen_height-230,water)
+juice_3=Button(840,screen_height-230,juice)
+beer_3=Button(840,screen_height-230,beer)
+soju_3=Button(840,screen_height-230,soju)
 
 # 다른 장소로 이동하는 함수 (테이블에서)
 def move_place(click_number):
@@ -438,12 +484,72 @@ def move_place(click_number):
             if table_b.draw(): # 테이블 버튼 누르면 돌아가자
                 table()
             pygame.display.update()
-        pygame.display.update()
+        
+        # 짠 버튼을 눌렀을 때
+        if click_number==4:
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    pygame.quit() # 아예 창이 닫혀야 함
+
+            text_s4 = font3.render("무슨 음료로 짠을 하시겠습니까?", True, (255,0,0))
+            screen.blit(text_s4, (screen_width/2-150,180))
+
+            # 짠으로 마실 음료를 고르는 부분
+            for i in range(len(drink_array)):
+                for j in drink_array[i]:
+                    if i==0: # 첫 번째 음료가
+                        if j=="water": # 물일 때
+                            water_0.draw()
+                        elif j=="juice": # 주스일 때
+                            juice_0.draw()
+                        elif j=="beer": # 맥주일 때
+                            beer_0.draw()
+                        elif j=="soju": # 소주일 때
+                            soju_0.draw()
+
+                    elif i==1: # 두 번째 음료가
+                        if j=="water":
+                            water_1.draw()
+                        elif j=="juice":
+                            juice_1.draw()
+                        elif j=="beer":
+                            beer_1.draw()
+                        elif j=="soju":
+                            soju_1.draw()
+
+                    elif i==2: # 세 번째 음료
+                        if j=="water":
+                            water_2.draw()
+                        elif j=="juice":
+                            juice_2.draw()
+                        elif j=="beer":
+                            beer_2.draw()
+                        elif j=="soju":
+                            soju_2.draw()
+
+                    elif i==3: # 네 번째 음료
+                        if j=="water":
+                            water_3.draw()
+                        elif j=="juice":
+                            juice_3.draw()
+                        elif j=="beer":
+                            beer_3.draw()
+                        elif j=="soju":
+                            soju_3.draw()
+            pygame.display.update()
+
+        # 겐세이 버튼을 눌렀을 때 (좀 더 손보자)
+        if click_number==5:
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    pygame.quit() # 아예 창이 닫혀야 함
+            gensei.draw()
+
         clock.tick(30)
     pygame.display.update()
 
-# 편의점 버튼
-table_button=Button(150, screen_height-230, table_button)
+# 편의점에서 하는 행동 버튼
+table_button=Button(150, screen_height-230, table_button) # 테이블로 돌아가기
 ice=Button(460, screen_height-230, ice) # 아이스크림
 condition=Button(screen_width-280, screen_height-230, condition) # 숙취해소제
 
