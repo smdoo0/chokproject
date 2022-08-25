@@ -482,6 +482,7 @@ def at_table(click_number):
             smoking_b.draw()
             # if smoking_b.draw()
                 # smoking_f 함수 실행
+            pygame.display.update()
 
         # 안주를 먹는 버튼을 눌렀을 때
         if click_number==2: 
