@@ -2,6 +2,7 @@ from select import select
 import pygame
 import time
 import sys
+import random
 
 pygame.init()
 
@@ -16,6 +17,14 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 # 시작 화면 이미지
 background_img = pygame.image.load("이미지/backgroundimg.png")
 start_img = pygame.image.load("이미지/startimg.png")
+
+# com 이미지
+com1=pygame.image.load("이미지/c1.png")
+com1=pygame.transform.scale(com1,(120,120))
+com2=pygame.image.load("이미지/c2.png")
+com2=pygame.transform.scale(com2,(120,120))
+com3=pygame.image.load("이미지/c3.png")
+com3=pygame.transform.scale(com3,(120,120))
 
 # 잔 고르기 이미지
 water=pygame.image.load("이미지/water.jpg")
@@ -36,12 +45,10 @@ move= pygame.image.load("이미지/move.png") # 다른 장소로 이동 이미�
 move=pygame.transform.scale(move,(120,150))
 food = pygame.image.load("이미지/food.jpg") # 안주 먹기 이미지
 food=pygame.transform.scale(food,(150,150))
-glass = pygame.image.load("이미지/glass.jpg") # 잔 확인 이미지
-glass=pygame.transform.scale(glass,(150,150))
 cheers=pygame.image.load("이미지/cheers.png") # 짠(건배) 이미지
 cheers=pygame.transform.scale(cheers,(150,150))
-gensei=pygame.image.load("이미지/gensei.jpg")
-gensei=pygame.transform.scale(gensei,(110,110))
+close2=pygame.image.load("이미지/close2.png") # 안하기 버튼 이미지
+close2=pygame.transform.scale(close2,(120,120))
 
 # 테이블 행동(다른 장소로 이동)에 대한 버튼
 toilet=pygame.image.load("이미지/toilet.jpg") # 화장실 이미지
@@ -62,9 +69,9 @@ condition=pygame.image.load("이미지/condition.jpg") # 상쾌환 이미지
 condition=pygame.transform.scale(condition,(150,150))
 
 # 쓰이는 폰트들
-font = pygame.font.Font("C:/Users/woals/AppData/Local/Microsoft/Windows/Fonts/양진체v0.9_ttf.ttf", 80) # 장소 이름을 위한 폰트
-font2=pygame.font.Font("C:/Users/woals/AppData/Local/Microsoft/Windows/Fonts/양진체v0.9_ttf.ttf", 50) # 안내문을 위한 폰트
-font3=pygame.font.Font("C:/Users/woals/AppData/Local/Microsoft/Windows/Fonts/양진체v0.9_ttf.ttf", 25) # 안내문을 위한 폰트 2
+font=pygame.font.Font("이미지/양진체v0.9_ttf.ttf", 80) # 장소 이름을 위한 폰트
+font2=pygame.font.Font("이미지/양진체v0.9_ttf.ttf", 50) # 안내문을 위한 폰트
+font3=pygame.font.Font("이미지/양진체v0.9_ttf.ttf", 25) # 안내문을 위한 폰트 2
 
 # 게임에서 쓸 변수들
 turn = 1  # 턴 수
@@ -227,80 +234,121 @@ def mainmenu():
         start_button = Button(800, 500, start_img)
 
         if start_button.draw() == True:
-            choose_drink()
-
-        pygame.display.update()
-        clock.tick(30)
-
-# 음료 버튼
-water_b=Button(90,screen_height-230,water)
-juice_b=Button(335,screen_height-230,juice)
-beer_b=Button(590,screen_height-230,beer)
-soju_b=Button(840,screen_height-230,soju)
-
-# 잔에 들어있는 음료의 종류를 저장하기 위한 리스트
-drink_array=[]
-
-# 맨 처음 시작할 때 마실 것 정하기 (음료 종류가 4개) => 4개의 잔 정하기
-def choose_drink():
-    pygame.display.set_caption("음료 정하기")
-    drink = 0 # 잔의 개수
-
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-                sys.exit()
-
-        screen.fill(BLACK)
-
-        text_s1 = font2.render("음료를 선택하세요", True, (255,100,0))
-        screen.blit(text_s1, (screen_width/2-170,180))
-
-        # 음료 선택 (버튼을 누를 때 마다 그 버튼의 음료가 리스트에 추가됨)
-        if water_b.draw():
-            drink_array.append(["water"]) # []로 안하면 중복 인식을 하는지 같은 음료 여러 번 선택하면 안떠서 []로 함
-            drink=drink+1
-        elif juice_b.draw():
-            drink_array.append(["juice"]) # 같은 이유
-            drink=drink+1
-        elif beer_b.draw():
-            drink_array.append(["beer"]) # 같은 이유
-            drink=drink+1
-        elif soju_b.draw():
-            drink_array.append(["soju"]) # 같은 이유
-            drink=drink+1
-        
-        # 4개의 잔을 모두 선택하면 테이블로 넘어감
-        if drink==4:
             table()
 
-        # 음료 안내문
-        water_f=font3.render("물",True,WHITE)
-        screen.blit(water_f, (150,screen_height-60))
-        juice_f=font3.render("주스",True,WHITE)
-        screen.blit(juice_f, (390,screen_height-60))
-        beer_f=font3.render("맥주",True,WHITE)
-        screen.blit(beer_f, (640,screen_height-60))
-        soju_f=font3.render("소주",True,WHITE)
-        screen.blit(soju_f, (895,screen_height-60))
-
-        # 음료를 선택한 횟수를 알려줌
-        drink_num=font3.render("선택한 음료의 개수 : {}".format(drink),True, WHITE)
-        screen.blit(drink_num,(10,5))
-
         pygame.display.update()
         clock.tick(30)
 
+# 컴퓨터들의 게이지
+global com1_g
+com1_g=0
+global com2_g
+com2_g=0
+global com3_g
+com3_g=0
+
+# 짠에서 컴퓨터들이 마신 음료 여부 (True: 채워져 있음, False: 비워져 있음)
+# com1 여부
+global com1_water
+com1_water=True
+global com1_juice
+com1_juice=True
+global com1_beer
+com1_beer=True
+global com1_soju
+com1_soju=True
+# com2 여부
+global com2_water
+com2_water=True
+global com2_juice
+com2_juice=True
+global com2_beer
+com2_beer=True
+global com2_soju
+com2_soju=True
+# com3 여부
+global com3_water
+com3_water=True
+global com3_juice
+com3_juice=True
+global com3_beer
+com3_beer=True
+global com3_soju
+com3_soju=True
+
+# 짠할 때 com들에게 미치는 영향
+def computer(com_num):
+    global com1_water
+    global com1_juice
+    global com1_beer
+    global com1_soju
+
+    global com2_water
+    global com2_juice
+    global com2_beer
+    global com2_soju
+
+    global com3_water
+    global com3_juice
+    global com3_beer
+    global com3_soju
+
+    global com1_g
+    global com2_g
+    global com3_g
+
+    # 난수 생성 (짠할 때 각각의 com들이 마실 음료들)
+    num=random.randrange(1,4)
+    # com1 일 때
+    if com_num==1:
+        if num==1: # num==1 은 물
+            com1_g=com1_g-2
+            com1_water=False
+        elif num==2: # num==2 는 주스
+            com1_g=com1_g-1
+            com1_juice=False
+        elif num==3: # num==3 은 맥주
+            com1_g=com1_g+1
+            com1_beer=False
+        elif num==4: # num==4 는 소주
+            com1_g=com1_g+2
+            com1_soju=False
+    # com2 일 때
+    elif com_num==2: # com1 일 때
+        if num==1: # num==1 은 물
+            com2_g=com2_g-2
+            com2_water=False
+        elif num==2: # num==2 는 주스
+            com2_g=com2_g-1
+            com2_juice=False
+        elif num==3: # num==3 은 맥주
+            com2_g=com2_g+1
+            com2_beer=False
+        elif num==4: # num==4 는 소주
+            com2_g=com2_g+2
+            com2_soju=False
+    # com3 일 때
+    elif com_num==3:
+        if num==1: # num==1 은 물
+            com3_g=com3_g-2
+            com3_water=False
+        elif num==2: # num==2 는 주스
+            com3_g=com3_g-1
+            com3_juice=False
+        elif num==3: # num==3 은 맥주
+            com3_g=com3_g+1
+            com3_beer=False
+        elif num==4: # num==4 는 소주
+            com3_g=com3_g+2
+            com3_soju=False
+
+    pygame.display.update()
+    clock.tick(30)
 
 # 테이블 버튼
-move = Button(90, screen_height-230, move)
-food = Button(335, screen_height-230, food)
-glass = Button(590, screen_height-230, glass)
-cheers = Button(840, screen_height-230, cheers)
-gensei = Button(820, screen_height-420, gensei)
+move_b = Button(150, screen_height-230, move)
+food_b = Button(460, screen_height-230, food)
+cheers_b = Button(screen_width-280, screen_height-230, cheers)
 
 # 포만도가 다 차있는지 판단
 global food_max
@@ -317,60 +365,43 @@ def table():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
-                sys.exit()
 
         screen.blit(table_image, (0, 0))
         screen.blit(place_table, (screen_width-260,30))
         
         table_mv=font3.render("다른 장소로 가기",True,WHITE)
-        screen.blit(table_mv, (65,screen_height-60))
+        screen.blit(table_mv, (130,screen_height-60))
 
         table_fd=font3.render("안주 먹기",True,WHITE)
-        screen.blit(table_fd, (365,screen_height-60))
-
-        table_gl=font3.render("다른 사람의 잔 확인",True,WHITE)
-        screen.blit(table_gl, (570,screen_height-60))
+        screen.blit(table_fd, (490,screen_height-60))
 
         table_ch=font3.render("짠",True,WHITE)
-        screen.blit(table_ch, (900,screen_height-60))
-
-        table_ge=font3.render("겐세이",True,WHITE)
-        screen.blit(table_ge, (840,screen_height-295))
+        screen.blit(table_ch, (screen_width-220,screen_height-60))
 
         p.draw(screen)
         p.update()
 
         # 다른 장소 가기
-        if move.draw():
+        if move_b.draw():
             print("다른 장소로 갑니다")
-            move_place(1) # 다른 장소로 가는 화면 전환
+            at_table(1) # 다른 장소로 가는 화면 전환
 
         # 포만도가 다 차면 안주 못먹음
         if p.sprite.target_full==p.sprite.max_full:
             food_max=True
 
         # 안주 먹기
-        if food.draw():
+        if food_b.draw():
             if food_max==False: # 포만도가 다 안차있으면 실행
                 print("안주를 먹습니다") # 안주 먹기(취기 - 포만도 ++ )
-                p.sprite.get_drunk_down(20)
-                p.sprite.get_full_up(40)
-                move_place(2) # 안주를 먹는 화면 전환
-        
-        # 자리에 없는 사람 잔 확인
-        if glass.draw():
-            print("자리에 없는 사람의 잔을 확인합니다")
-            move_place(3) # 자리에 없는 사람의 잔을 확인하는 화면 전환
+                p.sprite.get_drunk_down(10)
+                p.sprite.get_full_up(30)
+                at_table(2) # 안주를 먹는 화면 전환
         
         # 짠
-        if cheers.draw():
+        if cheers_b.draw():
             print("짠")
-            move_place(4) # 짠(건배) 화면 전환
-
-        # 겐세이
-        if gensei.draw():
-            print("겐세이")
-            move_place(5) # 겐세이 화면 전환
+            at_table(3) # 짠(건배) 화면 전환
 
         pygame.display.update()
         clock.tick(30)
@@ -381,37 +412,36 @@ table_b=Button(screen_width/2-60,400,table_b) # 테이블로 가는 버튼
 toilet_b=Button(150, screen_height-230,toilet) # 화장실로 가는 버튼
 store_b=Button(460, screen_height-230,store) # 편의점으로 가는 버튼
 smoking_b=Button(screen_width-280, screen_height-230,smoking) # 흡연장으로 가는 버튼
-close_b=Button(460, screen_height-230,close) # 편의점 또 못가는 걸 표시해줌
+close_st=Button(460, screen_height-230,close) # 편의점 또 못가는 걸 표시해줌
+
+# 짠할 때 마실 음료 버튼
+water_b=Button(90,screen_height-230,water)
+juice_b=Button(335,screen_height-230,juice)
+beer_b=Button(590,screen_height-230,beer)
+soju_b=Button(840,screen_height-230,soju)
+
+# 짠했을 때 마신 음료 판단
+global water_full
+water_bool=True
+global juice_full
+juice_full=True
+global beer_full
+beer_full=True
+global soju_full
+soju_full=True
 
 # 편의점에 간 적이 있는지 판단
 global try_store
 try_store=False
 
-# 짠할 때 마실 음료 버튼
-# drink_array.index(i)==0 일 때
-water_0=Button(90,screen_height-230,water)
-juice_0=Button(90,screen_height-230,juice)
-beer_0=Button(90,screen_height-230,beer)
-soju_0=Button(90,screen_height-230,soju)
-# drink_array.index(i)==1 일 때
-water_1=Button(335,screen_height-230,water)
-juice_1=Button(335,screen_height-230,juice)
-beer_1=Button(335,screen_height-230,beer)
-soju_1=Button(335,screen_height-230,soju)
-# drink_array.index(i)==2 일 때
-water_2=Button(590,screen_height-230,water)
-juice_2=Button(590,screen_height-230,juice)
-beer_2=Button(590,screen_height-230,beer)
-soju_2=Button(590,screen_height-230,soju)
-# drink_array.index(i)==3 일 때
-water_3=Button(840,screen_height-230,water)
-juice_3=Button(840,screen_height-230,juice)
-beer_3=Button(840,screen_height-230,beer)
-soju_3=Button(840,screen_height-230,soju)
-
-# 다른 장소로 이동하는 함수 (테이블에서)
-def move_place(click_number):
+# 테이블에서의 행동 함수
+def at_table(click_number):
     global try_store # 여기서 False 를 해버리면 함수가 실행될 때마다 False가 되니까 밖에서 False라고 선언
+    global water_full # 같은 이유
+    global juice_full # 같은 이유
+    global beer_full # 같은 이유
+    global soju_full # 같은 이유
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -444,7 +474,7 @@ def move_place(click_number):
                 try_store=True # 편의점 한번 갔으니까 try_store를 True로 바꿈
                 store_f() # 편의점 함수 실행
             if try_store==True:
-                close_b.draw()
+                close_st.draw()
 
             # 흡연장으로 가는 버튼 부분
             text_sm=font3.render("흡연장",True,BLACK)
@@ -469,82 +499,290 @@ def move_place(click_number):
                 table()
             pygame.display.update()
         
-        # 자리에 없는 사람 잔 확인 버튼을 눌렀을 때
-        if click_number==3: 
-            for event in pygame.event.get():
-                if event.type==pygame.QUIT:
-                    pygame.quit() # 아예 창이 닫혀야 함
-
-            text_s3 = font3.render("자리에 없는 사람의 잔을 확인합니다...", True, (255,0,0))
-            screen.blit(text_s3, (screen_width/2-170,180))
-
-            # 테이블로 가는 버튼 부분
-            text_tb=font3.render("테이블로 돌아가기",True,BLACK)
-            screen.blit(text_tb, (screen_width/2-75,screen_height-70))
-            if table_b.draw(): # 테이블 버튼 누르면 돌아가자
-                table()
-            pygame.display.update()
-        
         # 짠 버튼을 눌렀을 때
-        if click_number==4:
+        if click_number==3:
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     pygame.quit() # 아예 창이 닫혀야 함
 
-            text_s4 = font3.render("무슨 음료로 짠을 하시겠습니까?", True, (255,0,0))
-            screen.blit(text_s4, (screen_width/2-150,180))
+            text_s4 = font2.render("무슨 음료로 짠을 하시겠습니까?", True, (255,0,0))
+            screen.blit(text_s4, (230,180))
 
             # 짠으로 마실 음료를 고르는 부분
-            for i in range(len(drink_array)):
-                for j in drink_array[i]:
-                    if i==0: # 첫 번째 음료가
-                        if j=="water": # 물일 때
-                            water_0.draw()
-                        elif j=="juice": # 주스일 때
-                            juice_0.draw()
-                        elif j=="beer": # 맥주일 때
-                            beer_0.draw()
-                        elif j=="soju": # 소주일 때
-                            soju_0.draw()
+            if water_b.draw(): # 물을 마실 때
+                water_full=False
+                check_glass()
+            if juice_b.draw(): # 주스를 마실 때
+                juice_full=False
+                check_glass()
+            if beer_b.draw(): # 맥주를 마실 때
+                beer_full=False
+                p.sprite.get_drunk_up(10)
+                check_glass()
+            if soju_b.draw(): # 소주를 마실 때
+                soju_full=False
+                p.sprite.get_drunk_up(20)
+                check_glass()
 
-                    elif i==1: # 두 번째 음료가
-                        if j=="water":
-                            water_1.draw()
-                        elif j=="juice":
-                            juice_1.draw()
-                        elif j=="beer":
-                            beer_1.draw()
-                        elif j=="soju":
-                            soju_1.draw()
+            # com들이 마실 음료 정하기
+            computer(1)
+            computer(2)
+            computer(3)
 
-                    elif i==2: # 세 번째 음료
-                        if j=="water":
-                            water_2.draw()
-                        elif j=="juice":
-                            juice_2.draw()
-                        elif j=="beer":
-                            beer_2.draw()
-                        elif j=="soju":
-                            soju_2.draw()
+            # 음료 안내문
+            water_f=font3.render("물",True,WHITE)
+            screen.blit(water_f, (150,screen_height-60))
+            juice_f=font3.render("주스",True,WHITE)
+            screen.blit(juice_f, (390,screen_height-60))
+            beer_f=font3.render("맥주",True,WHITE)
+            screen.blit(beer_f, (640,screen_height-60))
+            soju_f=font3.render("소주",True,WHITE)
+            screen.blit(soju_f, (895,screen_height-60))
 
-                    elif i==3: # 네 번째 음료
-                        if j=="water":
-                            water_3.draw()
-                        elif j=="juice":
-                            juice_3.draw()
-                        elif j=="beer":
-                            beer_3.draw()
-                        elif j=="soju":
-                            soju_3.draw()
             pygame.display.update()
 
-        # 겐세이 버튼을 눌렀을 때 (좀 더 손보자)
-        if click_number==5:
-            for event in pygame.event.get():
-                if event.type==pygame.QUIT:
-                    pygame.quit() # 아예 창이 닫혀야 함
-            gensei.draw()
+    pygame.display.update()
 
+# com 버튼
+com1_b=Button(90, screen_height-230,com1)
+com2_b=Button(335, screen_height-230,com2)
+com3_b=Button(590, screen_height-230,com3)
+close_ch=Button(840, screen_height-230,close2)
+
+# 잔 확인 화면 전환 함수
+def check_glass():
+    running=True
+    while running:
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit() # 아예 창이 닫혀야 함
+
+        screen.fill(WHITE)
+
+        text_cg = font2.render("누구의 잔을 확인하시겠습니까?", True, (255,0,0))
+        screen.blit(text_cg, (240,180))
+        
+        text_ch1=font3.render("com1", True, (255,0,0))
+        screen.blit(text_ch1, (110,screen_height-60))
+        text_ch2=font3.render("com2", True, (255,0,0))
+        screen.blit(text_ch2, (355,screen_height-60))
+        text_ch3=font3.render("com3", True, (255,0,0))
+        screen.blit(text_ch3, (615,screen_height-60))
+        text_ch4=font3.render("확인 안하기", True, (255,0,0))
+        screen.blit(text_ch4, (845,screen_height-60))
+
+        # 잔 확인을 할 com 고르기 버튼
+        if com1_b.draw():
+            com_check(1)
+        elif com2_b.draw():
+            com_check(2)
+        elif com3_b.draw():
+            com_check(3)
+
+        # 잔 확인을 안할 선택지
+        if close_ch.draw():
+            gensei()
+
+        pygame.display.update()
+        clock.tick(30)
+    pygame.display.update()
+
+# com 잔 확인 버튼
+water_c=Button(90,screen_height-230,water)
+juice_c=Button(335,screen_height-230,juice)
+beer_c=Button(590,screen_height-230,beer)
+soju_c=Button(840,screen_height-230,soju)
+
+# com 잔 확인 함수
+def com_check(com_glass):
+    running=True
+    while running:
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit() # 아예 창이 닫혀야 함
+
+        screen.fill(WHITE)
+
+        if com_glass==1:
+            text_cg1 = font2.render("COM1", True, (255,0,0))
+            screen.blit(text_cg1, (480,180))
+        elif com_glass==2:
+            text_cg2 = font2.render("COM2", True, (255,0,0))
+            screen.blit(text_cg2, (480,180))
+        elif com_glass==3:
+            text_cg3 = font2.render("COM3", True, (255,0,0))
+            screen.blit(text_cg3, (480,180))
+
+        if water_c.draw():
+            # com1 일 때 물,음료,소주,맥주 버튼 눌러서 그 음료에 맞는 True,False 값 확인,판단
+            if com_glass==1:
+                if com1_water==True:
+                    com_result(True)
+                elif com1_water==False:
+                    com_result(False)
+            # com2 일 때 물,음료,소주,맥주 버튼 눌러서 그 음료에 맞는 True,False 값 확인,판단
+            elif com_glass==2: 
+                if com2_water==True:
+                    com_result(True)
+                elif com2_water==False:
+                    com_result(False)
+            # com3 일 때 물,음료,소주,맥주 버튼 눌러서 그 음료에 맞는 True,False 값 확인,판단
+            elif com_glass==3: 
+                if com3_water==True:
+                    com_result(True)
+                elif com3_water==False:
+                    com_result(False)
+
+        elif juice_c.draw():
+            if com_glass==1:
+                if com1_juice==True:
+                    com_result(True)
+                elif com1_juice==False:
+                    com_result(False)
+            elif com_glass==2: 
+                if com2_juice==True:
+                    com_result(True)
+                elif com2_juice==False:
+                    com_result(False)
+            elif com_glass==3: 
+                if com3_juice==True:
+                    com_result(True)
+                elif com3_juice==False:
+                    com_result(False)
+
+        elif beer_c.draw():
+            if com_glass==1:
+                if com1_beer==True:
+                    com_result(True)
+                elif com1_beer==False:
+                    com_result(False)
+            elif com_glass==2: 
+                if com2_beer==True:
+                    com_result(True)
+                elif com2_beer==False:
+                    com_result(False)
+            elif com_glass==3: 
+                if com3_beer==True:
+                    com_result(True)
+                elif com3_beer==False:
+                    com_result(False)
+
+        elif soju_c.draw():
+            if com_glass==1:
+                if com1_soju==True:
+                    com_result(True)
+                elif com1_soju==False:
+                   com_result(False)
+            elif com_glass==2: 
+                if com2_soju==True:
+                    com_result(True)
+                elif com2_soju==False:
+                    com_result(False)
+            elif com_glass==3: 
+                if com3_soju==True:
+                    com_result(True)
+                elif com3_soju==False:
+                    com_result(False)
+
+        pygame.display.update()
+        clock.tick(30)
+    pygame.display.update()
+
+# com 잔 확인 결과 화면 전환 함수
+def com_result(t_or_f):
+    running=True
+    while running:
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit() # 아예 창이 닫혀야 함
+
+        screen.fill(WHITE)
+        
+        # com 잔 확인 결과에 따라 달라지는 화면 전환 
+        if t_or_f==True: # 잔이 채워져 있을 때
+            text_t = font2.render("잔이 채워져 있습니다!", True, (255,0,0))
+            screen.blit(text_t, (screen_width/2-240,180))
+            gensei()
+        elif t_or_f==False: # 잔이 비워져 있을 때
+            text_f = font2.render("잔이 비어있습니다!", True, (255,0,0))
+            screen.blit(text_f, (screen_width/2-220,180))
+            gensei()
+
+        pygame.display.update()
+        clock.tick(30)
+    pygame.display.update()
+
+# 겐세이 화면 com 버튼
+com1_gs = Button(90, screen_height-230 , com1)
+com2_gs = Button(335, screen_height-230, com2)
+com3_gs = Button(590, screen_height-230, com3)
+close_gs = Button(840, screen_height-230, close2)
+
+# 겐세이 함수
+def gensei():
+    global com1_g
+    global com2_g
+    global com3_g
+
+    running=True
+    while running:
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit() # 아예 창이 닫혀야 함
+        
+        screen.fill(WHITE)
+
+        text_cg = font2.render("누구에게 겐세이를 하시겠습니까?", True, (255,0,0))
+        screen.blit(text_cg, (220,180))
+        
+        text_gs1=font3.render("com1", True, (255,0,0))
+        screen.blit(text_gs1, (110,screen_height-60))
+        text_gs2=font3.render("com2", True, (255,0,0))
+        screen.blit(text_gs2, (355,screen_height-60))
+        text_gs3=font3.render("com3", True, (255,0,0))
+        screen.blit(text_gs3, (615,screen_height-60))
+        text_cgs=font3.render("겐세이 안하기", True, (255,0,0))
+        screen.blit(text_cgs, (835,screen_height-60))
+
+        # com1 겐세이
+        if com1_gs.draw():
+            if com1_beer==True or com1_soju==True: # com1이 술을 마시지 않았다면? -> 겐세이 성공 -> com 게이지 증가
+                print("겐세이 성공!")
+                com1_g=com1_g+3
+                table()
+            elif com1_beer==False or com1_soju==False: # com1이 술을 마셨다면? -> 겐세이 실패 -> 플레이어 취기 증가
+                print("겐세이 실패!")
+                p.sprite.get_drunk_up(30)
+                table()
+
+        # com2 겐세이
+        if com2_gs.draw():
+            if com2_beer==True or com2_soju==True: # com2이 술을 마시지 않았다면? -> 겐세이 성공 -> com 게이지 증가
+                print("겐세이 성공!")
+                com2_g=com2_g+3
+                table()
+            elif com2_beer==False or com2_soju==False: # com2이 술을 마셨다면? -> 겐세이 실패 -> 플레이어 취기 증가
+                print("겐세이 실패!")
+                p.sprite.get_drunk_up(30)
+                table()
+
+        # com3 겐세이
+        if com3_gs.draw():
+            if com3_beer==True or com3_soju==True: # com3이 술을 마시지 않았다면? -> 겐세이 성공 -> com 게이지 증가
+                print("겐세이 성공!")
+                com3_g=com3_g+3
+                table()
+            elif com3_beer==False or com3_soju==False: # com3이 술을 마셨다면? -> 겐세이 실패 -> 플레이어 취기 증가
+                print("겐세이 실패!")
+                p.sprite.get_drunk_up(30)
+                table()
+
+        # 겐세이를 하지 않을 때
+        if close_gs.draw():
+            print("겐세이를 하지 않습니다")
+            table()
+            
+        pygame.display.update()
         clock.tick(30)
     pygame.display.update()
 
